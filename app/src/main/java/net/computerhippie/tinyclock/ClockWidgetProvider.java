@@ -1,10 +1,12 @@
 package net.computerhippie.tinyclock;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.provider.AlarmClock;
 import android.widget.RemoteViews;
 
 import java.text.DateFormat;
@@ -19,7 +21,16 @@ public class ClockWidgetProvider extends AppWidgetProvider {
     DateFormat dateFormat = new SimpleDateFormat("d MMM");
 
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        updateClock(context);
+        final int N = appWidgetIds.length;
+        for (int i = 0; i < N; i++) {
+            int appWidgetId = appWidgetIds[i];
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, new Intent(AlarmClock.ACTION_SHOW_ALARMS), 0);
+            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.clock_widget);
+            views.setOnClickPendingIntent(R.id.clock, pendingIntent);
+            views.setTextViewText(R.id.time, timeFormat.format(new Date()));
+            views.setTextViewText(R.id.date, dateFormat.format(new Date()));
+            appWidgetManager.updateAppWidget(appWidgetId, views);
+        }
     }
 
     @Override
@@ -27,7 +38,17 @@ public class ClockWidgetProvider extends AppWidgetProvider {
         super.onReceive(context, intent);
 
         if(intent.getAction().equals(ACTION_AUTO_UPDATE)) {
-            updateClock(context);
+            ComponentName clockWidget = new ComponentName(context.getPackageName(), ClockWidgetProvider.class.getName());
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            int[] appWidgetIds = appWidgetManager.getAppWidgetIds(clockWidget);
+            final int N = appWidgetIds.length;
+            for (int i = 0; i < N; i++) {
+                int appWidgetId = appWidgetIds[i];
+                RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.clock_widget);
+                views.setTextViewText(R.id.time, timeFormat.format(new Date()));
+                views.setTextViewText(R.id.date, dateFormat.format(new Date()));
+                appWidgetManager.updateAppWidget(appWidgetId, views);
+            }
         }
     }
 
@@ -44,19 +65,5 @@ public class ClockWidgetProvider extends AppWidgetProvider {
         // stop alarm
         ClockWidgetAlarm appWidgetAlarm = new ClockWidgetAlarm(context.getApplicationContext());
         appWidgetAlarm.stopAlarm();
-    }
-
-    private void updateClock(Context context) {
-        ComponentName clockWidget = new ComponentName(context.getPackageName(), ClockWidgetProvider.class.getName());
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(clockWidget);
-        final int N = appWidgetIds.length;
-        for (int i = 0; i < N; i++) {
-            int appWidgetId = appWidgetIds[i];
-            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.clock_widget);
-            views.setTextViewText(R.id.time, timeFormat.format(new Date()));
-            views.setTextViewText(R.id.date, dateFormat.format(new Date()));
-            appWidgetManager.updateAppWidget(appWidgetId, views);
-        }
     }
 }
