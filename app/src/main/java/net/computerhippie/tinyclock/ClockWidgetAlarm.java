@@ -8,35 +8,24 @@ import android.content.Intent;
 import java.util.Calendar;
 
 public class ClockWidgetAlarm {
-    private final int ALARM_ID = 0;
-    private final int INTERVAL_MILLIS = 10000;
+    private static final int ALARM_ID = 0;
+    private static final int INTERVAL_MILLIS = 10000;
 
-    private Context mContext;
-
-
-    public ClockWidgetAlarm(Context context) {
-        mContext = context;
-    }
-
-
-    public void startAlarm() {
+    public static void startAlarm(Context context) {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MILLISECOND, INTERVAL_MILLIS);
-
         Intent alarmIntent = new Intent(ClockWidgetProvider.ACTION_AUTO_UPDATE);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, ALARM_ID, alarmIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-        AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, ALARM_ID, alarmIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         // RTC does not wake the device up
         alarmManager.setRepeating(AlarmManager.RTC, calendar.getTimeInMillis(), INTERVAL_MILLIS, pendingIntent);
     }
 
 
-    public void stopAlarm() {
+    public static void stopAlarm(Context context) {
         Intent alarmIntent = new Intent(ClockWidgetProvider.ACTION_AUTO_UPDATE);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, ALARM_ID, alarmIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-        AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, ALARM_ID, alarmIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(pendingIntent);
     }
 }

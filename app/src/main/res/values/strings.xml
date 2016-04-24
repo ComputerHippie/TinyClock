@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">TinyClock</string>
+    <string name="app_preferences">TinyClockPreferences</string>
 </resources>
