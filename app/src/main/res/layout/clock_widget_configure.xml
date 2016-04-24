@@ -11,7 +11,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Hours" android:textColor="@color/black" />
+            android:text="Format" android:textColor="@color/black" />
         <RadioGroup
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
