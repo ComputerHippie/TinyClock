@@ -11,7 +11,9 @@ public class ClockWidgetAlarm {
     private static final int ALARM_ID = 0;
     private static final int INTERVAL_MILLIS = 10000;
 
-    public static void startAlarm(Context context) {
+    public static void startIfNeeded(Context context) {
+        boolean alarmUp = (PendingIntent.getBroadcast(context, 0, new Intent("com.my.package.MY_UNIQUE_ACTION"), PendingIntent.FLAG_NO_CREATE) != null);
+
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MILLISECOND, INTERVAL_MILLIS);
         Intent alarmIntent = new Intent(ClockWidgetProvider.ACTION_AUTO_UPDATE);

@@ -17,7 +17,7 @@ import java.util.Date;
 
 public class ClockWidgetProvider extends AppWidgetProvider {
 
-    public static final String ACTION_AUTO_UPDATE = "AUTO_UPDATE";
+    public static final String ACTION_AUTO_UPDATE = "net.computerhippie.tinyclock.AUTO_UPDATE";
 
     DateFormat time24Format = new SimpleDateFormat("HH:mm");
     DateFormat time12Format = new SimpleDateFormat("h:mm a");
@@ -38,17 +38,21 @@ public class ClockWidgetProvider extends AppWidgetProvider {
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
             int[] appWidgetIds = appWidgetManager.getAppWidgetIds(clockWidget);
             updateWidgetView(context, appWidgetManager, appWidgetIds);
+
+            ClockWidgetAlarm.startIfNeeded(context);
         }
     }
 
-    @Override
-    public void onEnabled(Context context) {
-        ClockWidgetAlarm.startAlarm(context);
-    }
 
     @Override
-    public void onDisabled(Context context) {
-        ClockWidgetAlarm.stopAlarm(context);
+    public void onDeleted(Context context, int[] appWidgetIds) {
+        ComponentName clockWidget = new ComponentName(context.getPackageName(), ClockWidgetProvider.class.getName());
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        int[] existsAppWidgetIds = appWidgetManager.getAppWidgetIds(clockWidget);
+        if(existsAppWidgetIds.length == 0)
+            ClockWidgetAlarm.stopAlarm(context);
+
+        super.onDeleted(context, appWidgetIds);
     }
 
     private void updateWidgetView(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
