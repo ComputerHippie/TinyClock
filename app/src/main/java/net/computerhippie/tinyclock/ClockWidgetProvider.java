@@ -59,7 +59,9 @@ public class ClockWidgetProvider extends AppWidgetProvider {
         final int N = appWidgetIds.length;
         for (int i = 0; i < N; i++) {
             int appWidgetId = appWidgetIds[i];
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, new Intent(AlarmClock.ACTION_SHOW_ALARMS), 0);
+            Intent intent = new Intent(AlarmClock.ACTION_SET_ALARM);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.clock_widget);
             views.setOnClickPendingIntent(R.id.clock, pendingIntent);
 
